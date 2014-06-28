@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <style>
+            #game {                   
+                border: 1px solid black;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="game" width="256" height="256"></canvas>
+        
+        <script type="text/javascript" src="js/data.js"></script>
+        <script type="text/javascript" src="js/tile.js"></script>
+        <script type="text/javascript" src="js/input.js"></script>
+        <script type="text/javascript" src="js/entity.js"></script>
+        
+        <script type="text/javascript">
+            
+            
+            var game = {};
+
+            game.canvas = document.getElementById('game');
+            game.canvasCTX = game.canvas.getContext('2d');
+            
+            game.canvasTileRows = Math.floor(game.canvas.height/data.tile.size);
+            game.canvasTileCols = Math.floor(game.canvas.width/data.tile.size);
+            
+           
+                       
+            game.draw = function() {
+                game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
+                game.drawTileSet();
+                game.hero.move(game.input);
+                if ( game.hero.collisionCanvas(game.canvas) ) {
+                    game.hero.collisionEntityFix(game.input);
+                }
+                game.hero.draw(game.canvasCTX);
+                return this;
+            };
+            
+            game.hero = new Entity(data.hero);
+            game.input = new Input(game.draw);
+                       
+            game.tileSheet = new Tile(data.tile,game.draw);
+             
+             // todo: remove reference to data
+            game.drawTileSet = function() {
+                var undfind;
+                
+                for (var r = 0; r < game.canvasTileRows; r++) {
+                   for (var c = 0; c < game.canvasTileCols; c++) {
+                      var tile = data.game.world['1'][ r ][ c ];
+                      if ( null === tile || undfind === tile ) continue;
+                      var tileRow = (tile / game.tileSheet.rows) | 0; // Bitwise OR operation
+                      var tileCol = (tile % game.tileSheet.cols) | 0;
+                      game.canvasCTX.drawImage(game.tileSheet.img, (tileCol * data.tile.size), (tileRow * data.tile.size), data.tile.size, data.tile.size, (c * data.tile.size), (r * data.tile.size), data.tile.size, data.tile.size);
+                   }
+                } 
+                return this;
+            };
+            
+            
+            
+            
+            
+        </script>
+    
+    </body>
+</html>
