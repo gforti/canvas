@@ -219,7 +219,7 @@ var copyDown = false;
 
 
 var tileSize = 16;
-var tileID = '00';
+var tileID = 0;
 
 
 var CanvasTileRows = Math.floor(tileSheet.height/tileSize),
@@ -240,8 +240,8 @@ function resetTileSheetData() {
 	tilesheetData = [];
 	
 	for (var r = 0; r < CanvasRows; r++) {
-		 tilesheetData[r] = new Array( CanvasCols ).join(',00').split(',');
-		 tilesheetData[r][0] = '00';
+		 tilesheetData[r] = new Array( CanvasCols ).join(0).split('');
+		 
 	   }
 	
 }
@@ -285,9 +285,9 @@ function onMouseClick(e) {
 	//find tile to highlight
 	var col = Math.floor(mouseX / tileSize);
 	var row = Math.floor(mouseY / tileSize);
-	tileID = (row*(CanvasTileRows-1))+(col+row);
-	if ( tileID < 9 ) tileID = '0'+tileID;
-	tileID += '';
+	tileID = (row*(CanvasTileRows))+(col);
+	//if ( tileID < 9 ) tileID = '0'+tileID;
+	//tileID += '';
 	highlightTile(tileID,col*tileSize,row*tileSize);
 	
 	}
