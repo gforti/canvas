@@ -22,6 +22,13 @@
             <option value="item">Item</option>
             <option value="npc">NPC</option>
             <option value="floor">floor</option>
+            <option value="door">door</option>
+            <option value="lock">lock</option>
+            <option value="sign">sign</option>
+            <option value="chest">chest</option>
+            <option value="push">push</option>
+            <option value="enemy">enemy</option>
+            <option value="switch">switch</option>
         </select>
 
         <div id='info'></div>
@@ -41,8 +48,6 @@
             
             var tile = new Image();
 
-            
-            var data = {};
             var tileSize = 16;
             
             
@@ -63,6 +68,29 @@
             
             var mouse = { "x":0, "y":0 };
             
+            var imgType = document.getElementById('imgType');
+            
+            var currentImg;
+            var data = imgJsonData();
+            
+            function setSelected(val){
+                for(var i, j = 0; i = imgType.options[j]; j++) {
+                    if(i.value === val) {
+                        imgType.selectedIndex = j;
+                        break;
+                    }
+                }
+            }
+            
+            function updateType() {
+                if ( currentImg && currentImg.hasOwnProperty('type') )
+                    currentImg.type = imgType.options[imgType.selectedIndex].value;
+
+            }
+
+            imgType.addEventListener('change', updateType, false);
+
+            
             function imgDataResults() {
                     document.getElementById('dataInfo').value = JSON.stringify(data);
             }
@@ -77,56 +105,79 @@
             
             
             
-            
-        function onMouseClick(e) {
 
-           
-            mouse.x = e.clientX-tiles.canvas.offsetLeft;
-            mouse.y = e.clientY-tiles.canvas.offsetTop+window.scrollY;
-            
-            
-            if (mouse.y < tileSheet.height && mouse.x < tileSheet.width) {
-                //find tile to highlight
-                var col = ~~(mouse.x / tileSize);
-                var row = ~~(mouse.y / tileSize);
-                var tileId =  (row*tiles.rows)+(col);
-                
-                drawTileCopy(tileId);
-                highlightTile(tileId);
-                
+            function onMouseClick(e) {
 
-               
-                document.getElementById('info').innerHTML = '<p>Col: ' + col + ' Row: ' + row + ' ID: '+ tileId +'</p>';
-                //document.getElementById('dataInfo').value = img.src.orginal;
+
+                mouse.x = e.clientX-tiles.canvas.offsetLeft;
+                mouse.y = e.clientY-tiles.canvas.offsetTop+window.scrollY;
+
+
+                if (mouse.y < tileSheet.height && mouse.x < tileSheet.width) {
+                    //find tile to highlight
+                    var col = ~~(mouse.x / tileSize);
+                    var row = ~~(mouse.y / tileSize);
+                    var tileId =  (row*tiles.rows)+(col);
+
+                    drawTileCopy(tileId);
+                    highlightTile(tileId);
+
+                    currentImg = data[tileId];
+                    setSelected(currentImg.type);
+
+                    document.getElementById('info').innerHTML = '<p>Col: ' + col + ' Row: ' + row + ' ID: '+ tileId +'</p>';
+                    
+                }
+            }
+
+
+            function drawTileCopy(tileId){
+                var startX = ~~(tileId % tiles.rows) *tileSize;
+                var startY = ~~(tileId / tiles.rows) *tileSize;           
+                var imageData = tiles.canvasCTX.getImageData(startX,startY,tileSize,tileSize);	
+
+                if(imageData) {
+                   tiles.canvasCTXCopy.putImageData(imageData,0,0);                               
+                }
+            }
+
+
+
+
+            function highlightTile(tileId){
+
+                drawTileSheet();
+
+                var startX = ~~(tileId % tiles.rows) *tileSize;
+                var startY = ~~(tileId / tiles.rows) *tileSize;
+
+                tiles.canvasCTX.strokeStyle = "red";
+                tiles.canvasCTX.strokeRect(startX,startY,tileSize,tileSize)
+            }
+
+
+
+            function imgData(){
+                return {
+                    "type" : 'wall'			
+                };
+            }
+
+            function imgJsonData() {
+
+                var tile = {};
+                var tileId = '';
+
+                for ( var x = 0; x < tiles.cols; x++) {
+                    for ( var y = 0; y < tiles.rows; y++) {
+                        tileId = (y*tiles.rows)+(x);
+                        tile[tileId] = new imgData();
+                    }	
+                }
+
+                return tile;
 
             }
-        }
-        
-        
-        function drawTileCopy(tileId){
-            var startX = ~~(tileId % tiles.rows) *tileSize;
-            var startY = ~~(tileId / tiles.rows) *tileSize;           
-            var imageData = tiles.canvasCTX.getImageData(startX,startY,tileSize,tileSize);	
-            
-            if(imageData) {
-               tiles.canvasCTXCopy.putImageData(imageData,0,0);                               
-            }
-        }
-        
-        
-        
-        
-        function highlightTile(tileId){
-		
-            drawTileSheet();
-
-            var startX = ~~(tileId % tiles.rows) *tileSize;
-            var startY = ~~(tileId / tiles.rows) *tileSize;
-            
-            tiles.canvasCTX.strokeStyle = "red";
-            tiles.canvasCTX.strokeRect(startX,startY,tileSize,tileSize)
-	}
-
 
         </script>
     </body>
