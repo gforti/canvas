@@ -118,7 +118,8 @@
                     var col = ~~(mouse.x / tileSize);
                     var row = ~~(mouse.y / tileSize);
                     var tileId =  (row*tiles.rows)+(col);
-
+                    
+                    drawTileSheet();
                     drawTileCopy(tileId);
                     highlightTile(tileId);
 
@@ -146,8 +147,7 @@
 
             function highlightTile(tileId){
 
-                drawTileSheet();
-
+               
                 var startX = ~~(tileId % tiles.rows) *tileSize;
                 var startY = ~~(tileId / tiles.rows) *tileSize;
 
