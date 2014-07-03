@@ -96,7 +96,7 @@ function onMouseClick(e) {
 	highlightTile(tileId,col*tileSize,row*tileSize);
 	// drawTileCopy();
 	
-	
+	console.log((row*tileSize)+(col*tileSize));
 	var img = data['img_'+tileId];
       
 	currentImg = data['img_'+tileId];
@@ -147,7 +147,7 @@ function highlightTile(tileId,x,y){
 		//imageData.data[j-2]=128;
 		
 	}
-	var startX = Math.floor(tileId % 8)  | 0;
+	var startX = Math.floor(tileId % 8)  | 0; //does the same thing as Math.floor, but is faster.
 	var startY = Math.floor(tileId / 16) | 0;
          
          startX *=tileSize;
