@@ -36,13 +36,13 @@ THE SOFTWARE.
     <body>
         <canvas id="game" width="256" height="256"></canvas>
         <br />
-        <button onclick='game.input.press(game.input.KEYS.LEFT);'>L</button>        
+        <button id="btnLeft">&#8592;</button>        
         &nbsp; &nbsp; &nbsp;
-        <button onclick='game.input.press(game.input.KEYS.UP);'>U</button>
+        <button id="btnUp">&#8593;</button>
         &nbsp; &nbsp; &nbsp;
-        <button onclick='game.input.press(game.input.KEYS.RIGHT);'>R</button>
+        <button id="btnRight">&#8594;</button>
         &nbsp; &nbsp; &nbsp;
-        <button onclick='game.input.press(game.input.KEYS.DOWN);'>D</button>
+        <button id="btnDown">&#8595;</button>
         
         <script type="text/javascript" src="js/data.js"></script>
         <script type="text/javascript" src="js/tile.js"></script>
@@ -58,7 +58,12 @@ THE SOFTWARE.
 
             window.cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
 
-
+                
+                
+            var btnLeft = document.getElementById('btnLeft'),
+                btnUp = document.getElementById('btnUp'),
+                btnRight = document.getElementById('btnRight'),
+                btnDown = document.getElementById('btnDown');
 
              var myReq;
              
@@ -71,7 +76,15 @@ THE SOFTWARE.
             
             
             
+            
+            
+                       
             var game = {};
+            
+            
+            
+            
+            game.touchable = 'createTouch' in document;
 
             game.canvas = document.getElementById('game');
             game.canvasCTX = game.canvas.getContext('2d');
@@ -178,6 +191,72 @@ THE SOFTWARE.
             
             game.hero = new Entity(data.hero);
             game.input = new Input(game.draw);
+            
+            
+            
+            
+            game.press = {
+                "left" : function() {
+                    game.input.press(game.input.KEYS.LEFT);
+                 },
+                 "up" : function() {
+                    game.input.press(game.input.KEYS.UP);
+                 },
+                 "right" : function() {
+                    game.input.press(game.input.KEYS.RIGHT);
+                 },
+                 "down" : function() {
+                    game.input.press(game.input.KEYS.DOWN);
+                 },
+            };
+            
+            
+            game.release = {
+                "left" : function() {
+                    game.input.release(game.input.KEYS.LEFT);
+                },
+                "up" : function() {
+                    game.input.release(game.input.KEYS.UP);
+                },
+                "right" : function() {
+                    game.input.release(game.input.KEYS.RIGHT);
+                },
+                "down" : function() {
+                    game.input.release(game.input.KEYS.DOWN);
+                },
+            };
+            
+            
+            
+            
+            if(game.touchable) {
+                btnLeft.addEventListener('touchstart', game.press.left, false);
+                btnUp.addEventListener('touchstart', game.press.up, false);
+                btnRight.addEventListener('touchstart', game.press.right, false);
+                btnDown.addEventListener('touchstart', game.press.down, false);
+                
+                btnLeft.addEventListener('touchend', game.release.left, false);
+                btnUp.addEventListener('touchend', game.release.up, false);
+                btnRight.addEventListener('touchend', game.release.right, false);
+                btnDown.addEventListener('touchend', game.release.down, false);
+                   
+                    
+                    
+            } else {
+                   
+
+                btnLeft.addEventListener('mousedown', game.press.left, false);
+                btnUp.addEventListener('mousedown', game.press.up, false);
+                btnRight.addEventListener('mousedown', game.press.right, false);
+                btnDown.addEventListener('mousedown', game.press.down, false);
+                
+                btnLeft.addEventListener('mouseup', game.release.left, false);
+                btnUp.addEventListener('mouseup', game.release.up, false);
+                btnRight.addEventListener('mouseup', game.release.right, false);
+                btnDown.addEventListener('mouseup', game.release.down, false);
+            }
+
+
                        
             game.tileSheet = new Tile(data.tile,game.draw);
              

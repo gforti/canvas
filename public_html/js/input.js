@@ -4,6 +4,11 @@ function Input(cb){
 
 Input.prototype.pressedKeys = {};
 Input.prototype.callBack = null;
+Input.prototype.frameID = null;
+Input.prototype.frame = 0;
+Input.prototype.maxFrame = 5;
+
+
 Input.prototype.KEYS = {
     "ENTER" : 13,
     "SPACE" : 32,
@@ -36,10 +41,27 @@ Input.prototype.init = function(cb) {
 Input.prototype.press = function(keyCode) {
     
     this.pressedKeys[keyCode] = true;
-    this.callBack();
-    delete this.pressedKeys[keyCode];   
+    
+    this.frame = (this.frame + 1) % this.maxFrame;
+    
+    if ( this.frame === 0)
+        this.callBack();
+    var that = this;
+    this.frameID = requestAnimationFrame(function() {       
+            that.press(keyCode);
+        });
+       
+};
+
+
+Input.prototype.release = function(keyCode) {
+       
+    delete this.pressedKeys[keyCode];  
+    this.frame = 0;
+    window.cancelAnimationFrame(this.frameID);
     
 };
+
 
 
 Input.prototype.pressed = function(key) {
