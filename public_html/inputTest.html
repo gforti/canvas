@@ -1,8 +1,26 @@
 <!DOCTYPE html>
 <!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
+The MIT License (MIT)
+
+Copyright (c) 2014 Gabriel Forti
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 -->
 <html>
     <head>
@@ -56,21 +74,46 @@ and open the template in the editor.
            
                        
             game.draw = function() {
+                if(myReq) return this;
                 game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
                 
                 game.hero.move(game.input);
                 
                 
                 if ( game.hero.collisionCanvasRight(game.canvas) && data.game.world[data.game.map].exits.right.length ) {
-                    data.game.map = data.game.world[data.game.map].exits.right;
-                    game.hero.col = 0;
+                    //data.game.map = data.game.world[data.game.map].exits.right;
+                    //game.hero.col = 0;
+                    
+                    
+                   
+                    
+                    var rows = data.game.world[data.game.map].map.length;
+                    
+                    while ( rows-- ) {
+                        mapchangeData.map[rows] = data.game.world[data.game.map].map[rows].concat(data.game.world[data.game.world[data.game.map].exits.right].map[rows]);
+                    }
+                    
+                     myReq = requestAnimationFrame(changeMapRight);
+                    
                    
                 }
                 
                 if ( game.hero.collisionCanvasLeft(game.canvas) && data.game.world[data.game.map].exits.left.length ) {
-                    data.game.map = data.game.world[data.game.map].exits.left;
-                    game.hero.col = (game.canvasTileCols-1)*data.tile.size;
+                    //data.game.map = data.game.world[data.game.map].exits.left;
+                    //game.hero.col = (game.canvasTileCols-1)*data.tile.size;
                     //console.log(game.canvasTileCols);
+                    
+                    mapchangeData.viewport = game.canvasTileCols;
+                    var rows = data.game.world[data.game.map].map.length;
+                    
+                    while ( rows-- ) {
+                        mapchangeData.map[rows] = data.game.world[data.game.world[data.game.map].exits.left].map[rows].concat(data.game.world[data.game.map].map[rows]);
+                    }
+                    
+                    
+                     myReq = requestAnimationFrame(changeMapLeft);
+                     
+                     
                 }
                 
                 
@@ -153,12 +196,14 @@ and open the template in the editor.
                 mapchangeData.viewport++;
                 
                 if ( mapchangeData.viewport === game.canvasTileRows) {
+                    window.cancelAnimationFrame(myReq);
+                    myReq = null;
                     mapchangeData.viewport = 0;
                      mapchangeData.map = [];
                     data.game.map = data.game.world[data.game.map].exits.bottom;
                     game.hero.row = 0;
                     game.draw();
-                    window.cancelAnimationFrame(myReq);
+                    
                 } else {
                     requestAnimationFrame(changeMapBottom);
                 }
@@ -192,14 +237,97 @@ and open the template in the editor.
                 mapchangeData.viewport--;
                 
                 if ( mapchangeData.viewport === 0) {
+                    window.cancelAnimationFrame(myReq);
+                    myReq = null;
                     mapchangeData.viewport = 0;
                     mapchangeData.map = [];
                     data.game.map = data.game.world[data.game.map].exits.top;
                     game.hero.row = (game.canvasTileRows-1)*data.tile.size;
                     game.draw();
-                    window.cancelAnimationFrame(myReq);
+                    
                 } else {
                     requestAnimationFrame(changeMapTop);
+                }
+                    
+                
+                
+            }
+            
+            
+            
+            
+            function changeMapRight(){
+                            
+                var undfind;
+                                
+                
+                game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
+                
+                for (var r = 0; r < game.canvasTileRows; r++) {
+                    for (var c = mapchangeData.viewport, cend = c + game.canvasTileCols; c < cend; c++) {
+                      var tile = mapchangeData.map[ r ][ c ];                      
+                      if ( null === tile || undfind === tile ) continue;
+                      var tileRow = (tile / game.tileSheet.rows) | 0; // Bitwise OR operation
+                      var tileCol = (tile % game.tileSheet.cols) | 0;
+                      game.canvasCTX.drawImage(game.tileSheet.img, (tileCol * data.tile.size), (tileRow * data.tile.size), data.tile.size, data.tile.size, ((c-mapchangeData.viewport) * data.tile.size), (r * data.tile.size), data.tile.size, data.tile.size);
+                   }
+                } 
+            
+                game.hero.col -= data.tile.size;
+                game.hero.draw(game.canvasCTX);
+                mapchangeData.viewport++;
+                
+                if ( mapchangeData.viewport === game.canvasTileCols) {
+                    window.cancelAnimationFrame(myReq);
+                    myReq = null;
+                    mapchangeData.viewport = 0;
+                    mapchangeData.map = [];
+                    data.game.map = data.game.world[data.game.map].exits.right;
+                    game.hero.col = 0;
+                    game.draw();
+                    
+                } else {
+                    requestAnimationFrame(changeMapRight);
+                }
+                    
+                
+                
+            }
+            
+            
+            
+            function changeMapLeft(){
+                            
+                var undfind;
+                                
+                
+                game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
+                
+                for (var r = 0; r < game.canvasTileRows; r++) {
+                    for (var c = mapchangeData.viewport, cend = c + game.canvasTileCols; c < cend; c++) {
+                      var tile = mapchangeData.map[ r ][ c ];                      
+                      if ( null === tile || undfind === tile ) continue;
+                      var tileRow = (tile / game.tileSheet.rows) | 0; // Bitwise OR operation
+                      var tileCol = (tile % game.tileSheet.cols) | 0;
+                      game.canvasCTX.drawImage(game.tileSheet.img, (tileCol * data.tile.size), (tileRow * data.tile.size), data.tile.size, data.tile.size, ((c-mapchangeData.viewport) * data.tile.size), (r * data.tile.size), data.tile.size, data.tile.size);
+                   }
+                } 
+            
+                game.hero.col += data.tile.size;
+                game.hero.draw(game.canvasCTX);
+                mapchangeData.viewport--;
+                
+                if ( mapchangeData.viewport === 0) {
+                    window.cancelAnimationFrame(myReq);
+                    myReq = null;
+                    mapchangeData.viewport = 0;
+                    mapchangeData.map = [];
+                    data.game.map = data.game.world[data.game.map].exits.left;
+                    game.hero.col = (game.canvasTileCols-1)*data.tile.size;
+                    game.draw();
+                    
+                } else {
+                    requestAnimationFrame(changeMapLeft);
                 }
                     
                 
