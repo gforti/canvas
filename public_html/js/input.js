@@ -32,6 +32,16 @@ Input.prototype.init = function(cb) {
 };
 
 
+
+Input.prototype.press = function(keyCode) {
+    
+    this.pressedKeys[keyCode] = true;
+    this.callBack();
+    delete this.pressedKeys[keyCode];   
+    
+};
+
+
 Input.prototype.pressed = function(key) {
     
     switch(key) {       
