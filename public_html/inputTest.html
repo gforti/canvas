@@ -28,21 +28,41 @@ THE SOFTWARE.
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width">
         <style>
+            html,body {
+                margin-left: 0.5em;
+            }
             #game {                   
                 border: 1px solid black;
+            }
+            table {
+                border: none;
             }
         </style>
     </head>
     <body>
         <canvas id="game" width="256" height="256"></canvas>
         <br />
-        <button id="btnLeft">&#8592;</button>        
-        &nbsp; &nbsp; &nbsp;
-        <button id="btnUp">&#8593;</button>
-        &nbsp; &nbsp; &nbsp;
-        <button id="btnRight">&#8594;</button>
-        &nbsp; &nbsp; &nbsp;
-        <button id="btnDown">&#8595;</button>
+        
+        <table>
+            <tr>
+                <td></td>
+                <td><button id="btnUp">&#8593;</button></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><button id="btnLeft">&#8592;</button></td>
+                <td></td>
+                <td><button id="btnRight">&#8594;</button></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><button id="btnDown">&#8595;</button></td>
+                <td></td>
+            </tr>
+        </table>
+        
+        
+        
         
         <script type="text/javascript" src="js/data.js"></script>
         <script type="text/javascript" src="js/tile.js"></script>
