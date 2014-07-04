@@ -110,6 +110,10 @@ Entity.prototype.move = function (input) {
 
 
 
+Entity.prototype.cords = function () {	
+	return {"row" : ~~( this.row /this.tileSize ), "col" : ~~( this.col /this.tileSize ) };
+};
+
 
 Entity.prototype.draw = function (canvasCTX) {
     canvasCTX.drawImage(this.img, 0, 0, this.tileSize, this.tileSize, this.col, this.row, this.tileSize, this.tileSize);	

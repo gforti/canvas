@@ -55,7 +55,7 @@ THE SOFTWARE.
              var myReq;
              
              var mapchangeData = {
-                "dir": 'bottom',
+                "location": 'top',
                 "map": [],
                 "viewport": 0
                 
@@ -78,8 +78,7 @@ THE SOFTWARE.
                 game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
                 
                 game.hero.move(game.input);
-                
-                
+                        
                 if ( game.hero.collisionCanvasRight(game.canvas) && data.game.world[data.game.map].exits.right.length ) {
                     //data.game.map = data.game.world[data.game.map].exits.right;
                     //game.hero.col = 0;
@@ -141,11 +140,28 @@ THE SOFTWARE.
                     //console.log(game.canvasTileCols);
                 }
                 
-                if ( !myReq && game.hero.collisionCanvas(game.canvas) ) {
-                    game.hero.collisionEntityFix(game.input);
-                     myReq = requestAnimationFrame(changeLocation);
+                if ( !myReq ) {                    
+                
+                    if ( !myReq && game.hero.collisionCanvas(game.canvas) ) {
+                        game.hero.collisionEntityFix(game.input);
+                         myReq = requestAnimationFrame(changeLocation);
+                    }
+
+                    var heroCords = game.hero.cords();                
+                    var tileID = data.game.world[data.game.map].map[ heroCords.row ][ heroCords.col ] || 0;
+                    var roadBlocks = 'wall lock sign chest enemy switch';
+
+                    if ( roadBlocks.indexOf(data.tile.map[tileID].type) > -1 ) {
+                        game.hero.collisionEntityFix(game.input);
+                    }
                     
-                }
+                    if ( 'door'.indexOf(data.tile.map[tileID].type) > -1 ) {
+                        game.hero.collisionEntityFix(game.input);
+                        myReq = requestAnimationFrame(changeLocation);
+                    }
+                
+                }   
+                
                 
                 game.drawTileSet();
                 game.hero.draw(game.canvasCTX);
@@ -352,7 +368,7 @@ THE SOFTWARE.
                 
                 
                 if ( mapchangeData.viewport > 300) {
-                    
+                    data.game.map = mapchangeData.location;
                     myReq = requestAnimationFrame(changeLocationOut);
                 } else {
                     requestAnimationFrame(changeLocation);
@@ -383,7 +399,7 @@ THE SOFTWARE.
                 if ( mapchangeData.viewport <= 0) {
                     window.cancelAnimationFrame(myReq);
                     myReq = null;
-                    mapchangeData.viewport = 0;
+                    mapchangeData.viewport = 0;                    
                     game.draw();
                     
                 } else {
