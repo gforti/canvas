@@ -141,8 +141,10 @@ THE SOFTWARE.
                     //console.log(game.canvasTileCols);
                 }
                 
-                if ( game.hero.collisionCanvas(game.canvas) ) {
+                if ( !myReq && game.hero.collisionCanvas(game.canvas) ) {
                     game.hero.collisionEntityFix(game.input);
+                     myReq = requestAnimationFrame(changeLocation);
+                    
                 }
                 
                 game.drawTileSet();
@@ -333,6 +335,67 @@ THE SOFTWARE.
                 
                 
             }
+            
+            
+            
+            
+            function changeLocation(){
+                
+                mapchangeData.viewport += 25;
+                
+                
+                game.canvasCTX.beginPath();
+                game.canvasCTX.lineWidth=mapchangeData.viewport;
+                game.canvasCTX.strokeStyle="black";
+                game.canvasCTX.rect(0,0,game.canvas.width,game.canvas.height);
+                game.canvasCTX.stroke();
+                
+                
+                if ( mapchangeData.viewport > 300) {
+                    
+                    myReq = requestAnimationFrame(changeLocationOut);
+                } else {
+                    requestAnimationFrame(changeLocation);
+                }
+                    
+                
+                
+            }
+            
+            
+            
+            
+            function changeLocationOut(){
+                
+                mapchangeData.viewport -= 25;
+                
+                
+                game.drawTileSet();
+                game.hero.draw(game.canvasCTX);
+                
+                game.canvasCTX.beginPath();
+                game.canvasCTX.lineWidth=mapchangeData.viewport;
+                game.canvasCTX.strokeStyle="black";
+                game.canvasCTX.rect(0,0,game.canvas.width,game.canvas.height);               
+                game.canvasCTX.stroke();
+                
+                
+                if ( mapchangeData.viewport <= 0) {
+                    window.cancelAnimationFrame(myReq);
+                    myReq = null;
+                    mapchangeData.viewport = 0;
+                    game.draw();
+                    
+                } else {
+                    requestAnimationFrame(changeLocationOut);
+                }
+                    
+                
+                
+            }
+            
+            
+            
             
             
               
