@@ -37,6 +37,27 @@ THE SOFTWARE.
             table {
                 border: none;
             }
+            button {
+                font-weight: bold;
+                padding:0em;
+                font-size: 1.5em;
+                margin: 0.2em;
+                width: 50px;
+                height: 35px;
+            } 
+            
+            
+            
+            @media all and (orientation: portrait) {
+
+            }
+
+            @media only screen and (orientation: landscape) {
+                table { float: right; margin-right: 0.5em; }
+                canvas { float: left; }
+            }
+            
+            
         </style>
     </head>
     <body>
@@ -215,35 +236,48 @@ THE SOFTWARE.
             
             
             
-            game.press = {
-                "left" : function() {
-                    game.input.press(game.input.KEYS.LEFT);
-                 },
-                 "up" : function() {
-                    game.input.press(game.input.KEYS.UP);
-                 },
-                 "right" : function() {
-                    game.input.press(game.input.KEYS.RIGHT);
-                 },
-                 "down" : function() {
-                    game.input.press(game.input.KEYS.DOWN);
-                 },
-            };
+            
             
             
             game.release = {
                 "left" : function() {
                     game.input.release(game.input.KEYS.LEFT);
+                    return this;
                 },
                 "up" : function() {
                     game.input.release(game.input.KEYS.UP);
+                    return this;
                 },
                 "right" : function() {
                     game.input.release(game.input.KEYS.RIGHT);
+                    return this;
                 },
                 "down" : function() {
                     game.input.release(game.input.KEYS.DOWN);
+                    return this;
                 },
+                "all" : function() {
+                    game.release.left().up().right().down();
+                }
+            };
+            
+            game.press = {
+                "left" : function() {
+                    game.release.all();
+                    game.input.press(game.input.KEYS.LEFT);
+                 },
+                 "up" : function() {
+                    game.release.all();
+                    game.input.press(game.input.KEYS.UP);
+                 },
+                 "right" : function() {
+                    game.release.all();
+                    game.input.press(game.input.KEYS.RIGHT);
+                 },
+                 "down" : function() {
+                    game.release.all();
+                    game.input.press(game.input.KEYS.DOWN);
+                 }
             };
             
             
@@ -255,10 +289,10 @@ THE SOFTWARE.
                 btnRight.addEventListener('touchstart', game.press.right, false);
                 btnDown.addEventListener('touchstart', game.press.down, false);
                 
-                btnLeft.addEventListener('touchend', game.release.left, false);
-                btnUp.addEventListener('touchend', game.release.up, false);
-                btnRight.addEventListener('touchend', game.release.right, false);
-                btnDown.addEventListener('touchend', game.release.down, false);
+                btnLeft.addEventListener('touchend', game.release.all, false);
+                btnUp.addEventListener('touchend', game.release.all, false);
+                btnRight.addEventListener('touchend', game.release.all, false);
+                btnDown.addEventListener('touchend', game.release.all, false);
                    
                     
                     
@@ -270,10 +304,10 @@ THE SOFTWARE.
                 btnRight.addEventListener('mousedown', game.press.right, false);
                 btnDown.addEventListener('mousedown', game.press.down, false);
                 
-                btnLeft.addEventListener('mouseup', game.release.left, false);
-                btnUp.addEventListener('mouseup', game.release.up, false);
-                btnRight.addEventListener('mouseup', game.release.right, false);
-                btnDown.addEventListener('mouseup', game.release.down, false);
+                btnLeft.addEventListener('mouseup', game.release.all, false);
+                btnUp.addEventListener('mouseup', game.release.all, false);
+                btnRight.addEventListener('mouseup', game.release.all, false);
+                btnDown.addEventListener('mouseup', game.release.all, false);
             }
 
 
