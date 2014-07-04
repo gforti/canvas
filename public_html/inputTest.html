@@ -26,6 +26,25 @@ and open the template in the editor.
         <script type="text/javascript">
             
             
+
+            window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                                  window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+            window.cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+
+
+
+             var myReq;
+             
+             var mapchangeData = {
+                "dir": 'bottom',
+                "map": [],
+                "viewport": 0
+                
+            };
+            
+            
+            
             var game = {};
 
             game.canvas = document.getElementById('game');
@@ -38,11 +57,52 @@ and open the template in the editor.
                        
             game.draw = function() {
                 game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
-                game.drawTileSet();
+                
                 game.hero.move(game.input);
+                
+                
+                if ( game.hero.collisionCanvasRight(game.canvas) && data.game.world[data.game.map].exits.right.length ) {
+                    data.game.map = data.game.world[data.game.map].exits.right;
+                    game.hero.col = 0;
+                   
+                }
+                
+                if ( game.hero.collisionCanvasLeft(game.canvas) && data.game.world[data.game.map].exits.left.length ) {
+                    data.game.map = data.game.world[data.game.map].exits.left;
+                    game.hero.col = (game.canvasTileCols-1)*data.tile.size;
+                    //console.log(game.canvasTileCols);
+                }
+                
+                
+                 if ( game.hero.collisionCanvasTop(game.canvas) && data.game.world[data.game.map].exits.top.length ) {
+                    //data.game.map = data.game.world[data.game.map].exits.top;
+                    //game.hero.row = (game.canvasTileRows-1)*data.tile.size;
+                   
+                   mapchangeData.map = data.game.world[data.game.world[data.game.map].exits.top].map.concat(data.game.world[data.game.map].map);
+                    
+                    
+                   mapchangeData.viewport = game.canvasTileRows;
+                    myReq = requestAnimationFrame(changeMapTop);
+                   
+                }
+                
+                 if ( game.hero.collisionCanvasBottom(game.canvas) && data.game.world[data.game.map].exits.bottom.length ) {
+                    //data.game.map = data.game.world[data.game.map].exits.bottom;
+                    //game.hero.row = 0;
+                    
+                    mapchangeData.map = data.game.world[data.game.map].map.concat(data.game.world[data.game.world[data.game.map].exits.bottom].map);
+                    
+                    myReq = requestAnimationFrame(changeMapBottom);
+                                        
+                    
+                    //console.log(game.canvasTileCols);
+                }
+                
                 if ( game.hero.collisionCanvas(game.canvas) ) {
                     game.hero.collisionEntityFix(game.input);
                 }
+                
+                game.drawTileSet();
                 game.hero.draw(game.canvasCTX);
                 return this;
             };
@@ -58,7 +118,7 @@ and open the template in the editor.
                 
                 for (var r = 0; r < game.canvasTileRows; r++) {
                    for (var c = 0; c < game.canvasTileCols; c++) {
-                      var tile = data.game.world['1'][ r ][ c ];
+                      var tile = data.game.world[data.game.map].map[ r ][ c ];
                       if ( null === tile || undfind === tile ) continue;
                       var tileRow = (tile / game.tileSheet.rows) | 0; // Bitwise OR operation
                       var tileCol = (tile % game.tileSheet.cols) | 0;
@@ -69,6 +129,85 @@ and open the template in the editor.
             };
             
             
+            
+            
+            function changeMapBottom(){
+                            
+                var undfind;
+                                
+                
+                game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
+                
+                for (var r = mapchangeData.viewport, rend = r+game.canvasTileRows; r < rend; r++) {
+                    for (var c = 0; c < game.canvasTileCols; c++) {
+                      var tile = mapchangeData.map[ r ][ c ];                      
+                      if ( null === tile || undfind === tile ) continue;
+                      var tileRow = (tile / game.tileSheet.rows) | 0; // Bitwise OR operation
+                      var tileCol = (tile % game.tileSheet.cols) | 0;
+                      game.canvasCTX.drawImage(game.tileSheet.img, (tileCol * data.tile.size), (tileRow * data.tile.size), data.tile.size, data.tile.size, (c * data.tile.size), ((r-mapchangeData.viewport) * data.tile.size), data.tile.size, data.tile.size);
+                   }
+                } 
+            
+                game.hero.row -= data.tile.size;
+                game.hero.draw(game.canvasCTX);
+                mapchangeData.viewport++;
+                
+                if ( mapchangeData.viewport === game.canvasTileRows) {
+                    mapchangeData.viewport = 0;
+                     mapchangeData.map = [];
+                    data.game.map = data.game.world[data.game.map].exits.bottom;
+                    game.hero.row = 0;
+                    game.draw();
+                    window.cancelAnimationFrame(myReq);
+                } else {
+                    requestAnimationFrame(changeMapBottom);
+                }
+                    
+                
+                
+            }
+            
+            
+            
+            
+            function changeMapTop(){
+                            
+                var undfind;
+                                
+                
+                game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
+                
+                for (var r = mapchangeData.viewport, rend = r+game.canvasTileRows; r < rend; r++) {
+                    for (var c = 0; c < game.canvasTileCols; c++) {
+                      var tile = mapchangeData.map[ r ][ c ];                      
+                      if ( null === tile || undfind === tile ) continue;
+                      var tileRow = (tile / game.tileSheet.rows) | 0; // Bitwise OR operation
+                      var tileCol = (tile % game.tileSheet.cols) | 0;
+                      game.canvasCTX.drawImage(game.tileSheet.img, (tileCol * data.tile.size), (tileRow * data.tile.size), data.tile.size, data.tile.size, (c * data.tile.size), ((r-mapchangeData.viewport) * data.tile.size), data.tile.size, data.tile.size);
+                   }
+                } 
+            
+                game.hero.row += data.tile.size;
+                game.hero.draw(game.canvasCTX);
+                mapchangeData.viewport--;
+                
+                if ( mapchangeData.viewport === 0) {
+                    mapchangeData.viewport = 0;
+                    mapchangeData.map = [];
+                    data.game.map = data.game.world[data.game.map].exits.top;
+                    game.hero.row = (game.canvasTileRows-1)*data.tile.size;
+                    game.draw();
+                    window.cancelAnimationFrame(myReq);
+                } else {
+                    requestAnimationFrame(changeMapTop);
+                }
+                    
+                
+                
+            }
+            
+            
+              
             
             
             
