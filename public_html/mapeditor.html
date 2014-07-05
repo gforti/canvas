@@ -15,7 +15,7 @@
 
 <canvas id="game" width="128" height="256"></canvas>
 <canvas id="gamecopy" width="256" height="256"></canvas>
-
+<button onclick="imgDataResults();">Clear Canvas</button>
 <br />
 <br />
 
@@ -41,17 +41,13 @@ var grid = {};
 
 function newGrid() {
 	return {
-		"exits" : {
-			"top" : '',
-			"bottom" : '',
-			"left" : '',
-			"right" : ''
-		}, 
-		"doors" : [],
-		"title" : '',
-		"map" : saveTileSheetData(),
-                "id" : generateUUID()
-		
+            "exits" : {
+                "top" : '',
+                "bottom" : '',
+                "left" : '',
+                "right" : ''
+            },
+            "map" : saveTileSheetData()
 	};
 }
 
@@ -61,14 +57,13 @@ function addGrid() {
 	
 	if ( gridName.value.length ) {
 		
-		if ( !grid.hasOwnProperty(gridName.value) ) {
-			var option = document.createElement( 'option' );
-		    option.value = option.text = gridName.value;
-		    gridSel.add( option );
-		}
-		
-		grid[gridName.value] = newGrid();
-		
+            if ( !grid.hasOwnProperty(gridName.value) ) {
+                    var option = document.createElement( 'option' );
+                option.value = option.text = gridName.value;
+                gridSel.add( option );
+            }
+
+            grid[gridName.value] = newGrid();
 		
 	}
 		
@@ -130,6 +125,9 @@ function drawTileSet() {
   
    
 }
+
+
+
 
 
 
