@@ -37,13 +37,19 @@ THE SOFTWARE.
             table {
                 border: none;
             }
-            button {
+            .gamebtn {
                 font-weight: bold;
                 padding:0em;
+                padding-top: 0.2em;
                 font-size: 1.5em;
-                margin: 0.2em;
+                margin: 0em;
                 width: 50px;
                 height: 35px;
+                cursor: pointer;
+                border-radius: 10px;
+                border: 2px solid #999;
+                text-align: center;
+                user-select: none;
             } 
             
             
@@ -67,17 +73,17 @@ THE SOFTWARE.
         <table>
             <tr>
                 <td></td>
-                <td><button id="btnUp">&#8593;</button></td>
+                <td><div class="gamebtn" id="btnUp">&#8593;</div></td>
                 <td></td>
             </tr>
             <tr>
-                <td><button id="btnLeft">&#8592;</button></td>
+                <td><div class="gamebtn" id="btnLeft">&#8592;</div></td>
                 <td></td>
-                <td><button id="btnRight">&#8594;</button></td>
+                <td><div class="gamebtn" id="btnRight">&#8594;</div></td>
             </tr>
             <tr>
                 <td></td>
-                <td><button id="btnDown">&#8595;</button></td>
+                <td><div class="gamebtn" id="btnDown">&#8595;</div></td>
                 <td></td>
             </tr>
         </table>
@@ -136,7 +142,10 @@ THE SOFTWARE.
            
                        
             game.draw = function() {
-                if(myReq) return this;
+                if(myReq) {
+                    game.release.all();
+                    return this;
+                }
                 game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
                 
                 game.hero.move(game.input);
@@ -265,18 +274,22 @@ THE SOFTWARE.
                 "left" : function() {
                     game.release.all();
                     game.input.press(game.input.KEYS.LEFT);
+                    return this;
                  },
                  "up" : function() {
                     game.release.all();
                     game.input.press(game.input.KEYS.UP);
+                    return this;
                  },
                  "right" : function() {
                     game.release.all();
                     game.input.press(game.input.KEYS.RIGHT);
+                    return this;
                  },
                  "down" : function() {
                     game.release.all();
                     game.input.press(game.input.KEYS.DOWN);
+                    return this;
                  }
             };
             
@@ -298,7 +311,6 @@ THE SOFTWARE.
                     
             } else {
                    
-
                 btnLeft.addEventListener('mousedown', game.press.left, false);
                 btnUp.addEventListener('mousedown', game.press.up, false);
                 btnRight.addEventListener('mousedown', game.press.right, false);

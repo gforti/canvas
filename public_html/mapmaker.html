@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+    </head>
+    <body>
+        
+        
+        <canvas id="game" width="128" height="256"></canvas>        
+        <canvas id="gamecopy" width="256" height="256"></canvas>
+        
+        <button onclick="imgDataResults();">Clear Canvas</button>
+        <br />
+        <br />
+        
+        
+        Grid Name: <input type="text" id="gridName" />
+        <button onclick="addGrid();">Add Grid</button>
+        
+        <select id="gridSel"></select> <button onclick="loadGrid()">Load Grid</button>
+        
+        <br />
+        <br />
+        
+        <button onclick="gridResults();">Results Grid</button>
+        <textarea cols='100' rows='10' id='dataInfo'></textarea>
+
+
+        
+    </body>
+</html>
