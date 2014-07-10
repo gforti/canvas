@@ -115,6 +115,11 @@ Entity.prototype.cords = function () {
 };
 
 
+Entity.prototype.setCords = function(x,y) {
+    this.param({"row":y,"col":x});	
+};
+
+
 Entity.prototype.draw = function (canvasCTX) {
     canvasCTX.drawImage(this.img, 0, 0, this.tileSize, this.tileSize, this.col, this.row, this.tileSize, this.tileSize);	
     return this;

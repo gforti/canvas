@@ -68,6 +68,7 @@ THE SOFTWARE.
     </head>
     <body>
         <canvas id="game" width="256" height="256"></canvas>
+        <div id="msg"></div>
         <br />
         
         <table>
@@ -117,13 +118,14 @@ THE SOFTWARE.
              var mapchangeData = {
                 "location": 'top',
                 "map": [],
-                "viewport": 0
-                
+                "viewport": 0,               
+                "row" : 0,
+                "col" : 0 
             };
             
             
             
-            
+            var msg = document.getElementById('msg');
             
                        
             var game = {};
@@ -221,20 +223,33 @@ THE SOFTWARE.
 
                     var heroCords = game.hero.cords();                
                     var tileID = data.game.world[data.game.map].map[ heroCords.row ][ heroCords.col ] || 0;
-                    var roadBlocks = 'wall lock sign chest enemy switch';
+                    var roadBlocks = 'wall lock sign chest enemy switch door';
                     var mapID = ~~(heroCords.row*game.canvasTileRows)+heroCords.col;
+                    msg.innerHTML = '';
                     if ( roadBlocks.indexOf(data.tile.map[tileID].type) > -1 ) {
                         game.hero.collisionEntityFix(game.input);
+                        
+                        
+                        if (  data.game.world[data.game.map].config.hasOwnProperty(mapID) ) {
+                        
+                            if ( 'sign'.indexOf(data.tile.map[tileID].type) > -1 ) {
+                                msg.innerHTML = data.game.world[data.game.map].config[mapID].msg;
+                            }                 
+                
+                            if ( 'door'.indexOf(data.tile.map[tileID].type) > -1  && 
+                                data.game.world.hasOwnProperty(data.game.world[data.game.map].config[mapID].exit)
+                            ) {
+                                                      
+                                mapchangeData.location = data.game.world[data.game.map].config[mapID].exit;
+                                mapchangeData.row = 13;
+                                mapchangeData.col = 5;
+                                myReq = requestAnimationFrame(changeLocation);
+                            }
+                        }
+                        
                     }
                     
-                    if ( 'door'.indexOf(data.tile.map[tileID].type) > -1 ) {
-                        game.hero.collisionEntityFix(game.input);
-                        if (  data.game.world[data.game.map].config.hasOwnProperty(mapID) &&
-                              data.game.world.hasOwnProperty(data.game.world[data.game.map].config[mapID].exit)
-                                )
-                        mapchangeData.location = data.game.world[data.game.map].config[mapID].exit;
-                        myReq = requestAnimationFrame(changeLocation);
-                    }
+                    
                 
                 }   
                 
@@ -545,6 +560,7 @@ THE SOFTWARE.
                 
                 
                 game.drawTileSet();
+                game.hero.setCords(mapchangeData.col,mapchangeData.row);
                 game.hero.draw(game.canvasCTX);
                 
                 game.canvasCTX.beginPath();
