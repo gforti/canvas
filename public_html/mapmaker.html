@@ -32,10 +32,10 @@
                 <td>
                     <canvas id="config" width="256" height="256"></canvas>
                 </td>
-                <td>        
+                <td>   
+                    <strong>Tile:</strong> <br />
                     Exit: <select id="exitConfig"><option value=""></option></select> 
-                    
-                    
+                                        
                     <br />
                     Switch: <input type="text" id="switchConfig" /> <br />
                     Msg: <input type="text" id="msgConfig" /> <br />
@@ -44,6 +44,14 @@
                     Item: <input type="text" id="itemConfig" /> <br />
                     <button onclick="saveConfig()">Save Config</button>
                     <button onclick="clearConfig()">Clear Config</button>
+                </td>
+                <td>
+                    <strong>Map:</strong> <br />
+                    Exit Left: <select id="exitLeft"><option value=""></option></select>  <br />
+                    Exit Top: <select id="exitTop"><option value=""></option></select>  <br />
+                    Exit Right: <select id="exitRight"><option value=""></option></select>  <br />
+                    Exit Bottom: <select id="exitBottom"><option value=""></option></select>  <br />
+                                       
                 </td>
             </tr>
         </table>
@@ -73,8 +81,11 @@
                 "msg" : document.getElementById('msgConfig'),
                 "enemy" : document.getElementById('enemyConfig'),
                 "chest" : document.getElementById('chestConfig'),
-                "item" : document.getElementById('itemConfig')
-                
+                "item" : document.getElementById('itemConfig'),
+                "exitLeft" : document.getElementById('exitLeft'),
+                "exitTop" : document.getElementById('exitTop'),
+                "exitRight" : document.getElementById('exitRight'),
+                "exitBottom" : document.getElementById('exitBottom')               
             };
            
             
@@ -147,6 +158,7 @@
             
             editor.config.gridSelected = '';
             editor.config.canvasBoundingRect = editor.config.canvas.getBoundingClientRect();
+            editor.config.tilesheetData = [];
             
             
             editor.tile.setMouseCords = function(e) {
@@ -280,6 +292,22 @@
                         var option2 = document.createElement( 'option' );
                         option2.value = option2.text = gridName.value;
                         configInput.exit.add( option2 );
+                        
+                        var option = document.createElement( 'option' );
+                        option.value = option.text = gridName.value;
+                        configInput.exitLeft.add( option );
+                        
+                        var option = document.createElement( 'option' );
+                        option.value = option.text = gridName.value;
+                        configInput.exitTop.add( option );
+                        
+                        var option = document.createElement( 'option' );
+                        option.value = option.text = gridName.value;
+                        configInput.exitRight.add( option );
+                        
+                        var option = document.createElement( 'option' );
+                        option.value = option.text = gridName.value;
+                        configInput.exitBottom.add( option );
                     }
 
                     grid[gridName.value] = newGrid();
@@ -337,11 +365,13 @@
 
                 for (var r = 0, l = editor.map.rows; r < l; r++) {
                     editor.tilesheetData[r] = mapInfo[r].slice(0);
+                    editor.config.tilesheetData[r] = mapInfo[r].slice(0);
                 }
 
                 drawTileSet();
                 clearConfigCanvas();
                 drawConfigTileSet();
+                loadExitConfig();
                 
             }
 
@@ -372,7 +402,7 @@
                 
                for (var r = 0; r < editor.config.rows; r++) {
                   for (var c = 0; c < editor.config.cols; c++) {
-                     var tile = editor.tilesheetData[ r ][ c ];        
+                     var tile = editor.config.tilesheetData[ r ][ c ];        
                      if ( null === tile || undfind === tile ) continue;
                      var tileRow = (tile / editor.config.rows) | 0; // Bitwise OR operation
                      var tileCol = (tile % editor.config.cols) | 0;
@@ -433,6 +463,7 @@
 
 
             function saveConfig() {
+                var gridExits = grid[editor.config.gridSelected].exits;
                 var gridConfig = grid[editor.config.gridSelected].config[editor.config.ID] = new newconfig();
                 
                 gridConfig.exit = configInput.exit.options[configInput.exit.selectedIndex].value;
@@ -441,21 +472,34 @@
                 gridConfig.enemy = configInput.enemy.value;
                 gridConfig.chest = configInput.chest.value;
                 gridConfig.item = configInput.item.value;
+                
+                gridExits.left = configInput.exitLeft.options[configInput.exitLeft.selectedIndex].value;
+                gridExits.top = configInput.exitTop.options[configInput.exitTop.selectedIndex].value;
+                gridExits.right = configInput.exitRight.options[configInput.exitRight.selectedIndex].value;
+                gridExits.bottom = configInput.exitBottom.options[configInput.exitBottom.selectedIndex].value;
+                                
             }
             
-            
+            // todo also edit for exits
             function loadConfig() {
                 
-                if ( grid.hasOwnProperty(editor.config.gridSelected) && grid[editor.config.gridSelected].config.hasOwnProperty(editor.config.ID) ) {
-                    var gridConfig = grid[editor.config.gridSelected].config[editor.config.ID];
+                if ( grid.hasOwnProperty(editor.config.gridSelected) ) {
+                   if ( grid[editor.config.gridSelected].config.hasOwnProperty(editor.config.ID) ) { 
+                 
+                        var gridConfig = grid[editor.config.gridSelected].config[editor.config.ID];
 
-                    configInput.exit.value = gridConfig.exit;
-                    configInput.switch.value = gridConfig.switch;
-                    configInput.msg.value = gridConfig.msg;
-                    configInput.enemy.value = gridConfig.enemy;
-                    configInput.chest.value = gridConfig.chest;
-                    configInput.item.value = gridConfig.item;
-                }
+                        configInput.exit.value = gridConfig.exit;
+                        configInput.switch.value = gridConfig.switch;
+                        configInput.msg.value = gridConfig.msg;
+                        configInput.enemy.value = gridConfig.enemy;
+                        configInput.chest.value = gridConfig.chest;
+                        configInput.item.value = gridConfig.item;
+                    }
+                    
+                    
+                                
+                } 
+                
                 
             }
     
@@ -467,8 +511,30 @@
                 configInput.enemy.value = '';
                 configInput.chest.value = '';
                 configInput.item.value = '';
+                
+            }
+            
+            
+            function loadExitConfig() {
+                configInput.exitLeft.value = grid[editor.config.gridSelected].exits.left;
+                configInput.exitTop.value = grid[editor.config.gridSelected].exits.top;
+                configInput.exitRight.value = grid[editor.config.gridSelected].exits.right;
+                configInput.exitBottom.value = grid[editor.config.gridSelected].exits.bottom;
             }
    
+   
+   
+            function resetConfigTileSheetData() {
+	
+                editor.config.tilesheetData = [];
+
+                for (var r = 0; r < editor.config.rows; r++) {
+                    editor.config.tilesheetData[r] = new Array( editor.config.cols ).join(0).split('');
+                }
+
+            }
+            
+            resetConfigTileSheetData();
             
         </script>
                 
