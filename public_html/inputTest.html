@@ -139,6 +139,7 @@ THE SOFTWARE.
             game.canvasTileRows = Math.floor(game.canvas.height/data.tile.size);
             game.canvasTileCols = Math.floor(game.canvas.width/data.tile.size);
             
+            game.tileID = 0;
            
                        
             game.draw = function() {
@@ -221,13 +222,17 @@ THE SOFTWARE.
                     var heroCords = game.hero.cords();                
                     var tileID = data.game.world[data.game.map].map[ heroCords.row ][ heroCords.col ] || 0;
                     var roadBlocks = 'wall lock sign chest enemy switch';
-
+                    var mapID = ~~(heroCords.row*game.canvasTileRows)+heroCords.col;
                     if ( roadBlocks.indexOf(data.tile.map[tileID].type) > -1 ) {
                         game.hero.collisionEntityFix(game.input);
                     }
                     
                     if ( 'door'.indexOf(data.tile.map[tileID].type) > -1 ) {
                         game.hero.collisionEntityFix(game.input);
+                        if (  data.game.world[data.game.map].config.hasOwnProperty(mapID) &&
+                              data.game.world.hasOwnProperty(data.game.world[data.game.map].config[mapID].exit)
+                                )
+                        mapchangeData.location = data.game.world[data.game.map].config[mapID].exit;
                         myReq = requestAnimationFrame(changeLocation);
                     }
                 
