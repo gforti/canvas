@@ -58,14 +58,14 @@ function addGrid() {
 	if ( gridName.value.length ) {
 		
             if ( !grid.hasOwnProperty(gridName.value) ) {
-                    var option = document.createElement( 'option' );
+                var option = document.createElement( 'option' );
                 option.value = option.text = gridName.value;
                 gridSel.add( option );
             }
 
             grid[gridName.value] = newGrid();
 		
-	}
+	} 
 		
 }
 
