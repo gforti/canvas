@@ -27,7 +27,7 @@ Input.prototype.init = function(cb) {
     var that = this;
     document.addEventListener("keydown", function (e) {
         that.pressedKeys[e.keyCode] = true;
-        that.callBack();
+       // that.callBack();
     }, false);
 
     document.addEventListener("keyup", function (e) {
@@ -44,8 +44,8 @@ Input.prototype.press = function(keyCode) {
     
     this.frame = (this.frame + 1) % this.maxFrame;
     
-    if ( this.frame === 0)
-        this.callBack();
+    //if ( this.frame === 0)
+        //this.callBack();
     var that = this;
     this.frameID = requestAnimationFrame(function() {       
             that.press(keyCode);

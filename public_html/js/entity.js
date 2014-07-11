@@ -8,6 +8,9 @@ function Entity(o){
         this.type = 'FLOOR';
         this.img = new Image();
 	
+        this.maxTick = 5;
+        this.tick = 1;
+        
         this.param(o);
 }
 
@@ -91,7 +94,8 @@ Entity.prototype.collisionEntityFix = function (input) {
 
 
 Entity.prototype.move = function (input) {
-	
+    this.ticker();
+    if ( this.tick === 0 ) {
 	if ( input.pressed(input.KEYS.UP) ) { // Player holding up
                 this.row -= this.tileSize;
         }
@@ -104,10 +108,15 @@ Entity.prototype.move = function (input) {
         if ( input.pressed(input.KEYS.RIGHT) ) { // Player holding right
                 this.col += this.tileSize;
         }
-
+    }
         return this;
 };
 
+
+Entity.prototype.ticker = function() {
+    this.tick = (this.tick + 1) % this.maxTick;
+    
+};
 
 
 Entity.prototype.cords = function () {	

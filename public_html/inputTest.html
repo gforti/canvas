@@ -96,6 +96,7 @@ THE SOFTWARE.
         <script type="text/javascript" src="js/tile.js"></script>
         <script type="text/javascript" src="js/input.js"></script>
         <script type="text/javascript" src="js/entity.js"></script>
+        <script type="text/javascript" src="js/enemy.js"></script>
         
         <script type="text/javascript">
             
@@ -150,6 +151,12 @@ THE SOFTWARE.
                     return this;
                 }
                 game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
+                
+                game.enemy.move();
+                
+                if( game.enemy.collisionCanvas(game.canvas) ) {
+                    game.enemy.collisionFix();
+                }
                 
                 game.hero.move(game.input);
                         
@@ -255,11 +262,14 @@ THE SOFTWARE.
                 
                 
                 game.drawTileSet();
+                game.enemy.draw(game.canvasCTX);
                 game.hero.draw(game.canvasCTX);
+                requestAnimationFrame(game.draw);
                 return this;
             };
             
             game.hero = new Entity(data.hero);
+            game.enemy = new Enemy(data.enemies.dark);
             game.input = new Input(game.draw);
             
             
@@ -585,7 +595,7 @@ THE SOFTWARE.
             }
             
             
-            
+            requestAnimationFrame(game.draw);
             
             
               
