@@ -257,6 +257,20 @@ THE SOFTWARE.
                     }
                     
                     
+                   // collision bug is entity goes in a direction where there is always a collision
+                   // fix will fail
+                   // make a collision class
+                   // make a enemy map like world map, if dead can delete to save memeory
+                    var enemyCords = game.enemy.cords();
+                    
+                    var enemyTileID = data.game.world[data.game.map].map[ enemyCords.row ][ enemyCords.col ] || 0;
+                    
+                    
+                    if ( roadBlocks.indexOf(data.tile.map[enemyTileID].type) > -1 ) {
+                        game.enemy.collisionFix();                        
+                    }
+                    
+                    
                 
                 }   
                 

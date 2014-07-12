@@ -13,6 +13,11 @@ function Enemy(o){
         this.direction = 1;
         this.maxTick = 10;
         this.tick = 1;
+        
+        this.maxTickMove = 10;
+        this.tickMove = 1;
+        
+        this.pause = false;
 	
         this.param(o);
 }
@@ -104,8 +109,13 @@ Enemy.prototype.move = function () {
         
     if ( this.tick === 0 ) {
         this.direction = this.directions[Math.floor(Math.random() * this.directions.length)];
+        this.pause = !this.pause;
+    }
 	
-	if ( this.direction === 1 ) { // Player holding up
+	
+      if ( this.tickMove === 0 && !this.pause ) {
+          
+        if ( this.direction === 1 ) { // Player holding up
                 this.row -= this.tileSize;
         }
         if ( this.direction === 2 ) { // Player holding down
@@ -116,17 +126,22 @@ Enemy.prototype.move = function () {
         }
         if ( this.direction === 4 ) { // Player holding right
                 this.col += this.tileSize;
-        }
-    }
+        } 
+        
+      }   
+    
     return this;
 };
 
 Enemy.prototype.ticker = function() {
     this.tick = (this.tick + 1) % this.maxTick;
+    this.tickMove = (this.tickMove + 1) % this.maxTickMove;
     
     if ( this.tick === 0 ) {
         var min = 10, max = 100;
         this.maxTick = Math.floor(Math.random()*(max-min+1)+min);
+        max = 20;
+        this.maxTickMove = ~~(Math.random()*(max-min+1)+min);
     }
 };
 
