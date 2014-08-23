@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+    </head>
+    <body>
+        <div>TODO write content</div>
+        
+        
+        <canvas id="game" width="256" height="256"></canvas>
+        <br />
+        
+        
+        <script type="text/javascript">
+            
+            
+            var canvas = document.getElementById('game');
+            
+            
+            function Battle(canvas, hero, enemy) {
+                this.canvas = canvas;
+                this.canvasCTX = canvas.getContext('2d');
+                this.hero = hero;
+                this.enemy = enemy;
+                
+                
+                
+            }
+            
+            
+            Battle.prototype.drawBackGround = function() {
+                this.canvasCTX.clearRect(0,0,this.canvas.width+1, this.canvas.height+1);
+                
+                 var grd = this.canvasCTX.createLinearGradient(0, 0, 0, this.canvas.height/2);
+	      // light blue
+                grd.addColorStop(0, '#004CB3');                  
+                grd.addColorStop(.50, '#FFFFFF');   
+                
+                this.canvasCTX.fillStyle = grd;
+                this.canvasCTX.fillRect(0, 0, this.canvas.width+1, this.canvas.height/2);
+                
+                this.canvasCTX.fillStyle = "rgba(186,218,110,1)";
+                this.canvasCTX.fillRect(0, this.canvas.height/2, this.canvas.width+1, this.canvas.height);
+                                
+            };
+            
+            var bat = new Battle(canvas);
+            bat.drawBackGround();
+            
+        </script>
+    </body>
+</html>
