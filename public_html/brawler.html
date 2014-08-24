@@ -16,6 +16,7 @@ and open the template in the editor.
         
         <canvas id="game" width="256" height="256"></canvas>
         <br />
+        <button onclick="figt();">Attack</button>
         
         <script type="text/javascript" src="js/data.js"></script>
         <script type="text/javascript" src="js/tile.js"></script>
@@ -25,7 +26,12 @@ and open the template in the editor.
         
         
         <script type="text/javascript">
-                        
+                   
+    
+    
+    
+    
+    
             var canvas = document.getElementById('game');
             
             var hero = new Entity(data.hero);
@@ -42,15 +48,17 @@ and open the template in the editor.
                 
                 this.atkInProgress = false;
                 this.turns = [this.hero, this.enemy];
+                this.count = 0;
+                this.maxCounter = 15;
             }
             
             
             Battle.prototype.drawBackGround = function() {
                 this.canvasCTX.clearRect(0,0,this.canvas.width+1, this.canvas.height+1);
-                
+                this.canvasCTX.save();
                 var grd = this.canvasCTX.createLinearGradient(0, 0, 0, this.canvas.height/2);
                 // light blue
-                grd.addColorStop(0, '#004CB3');                  
+                grd.addColorStop(0, '#00C9FF');                  
                 grd.addColorStop(.50, '#FFFFFF');   
                 
                 this.canvasCTX.fillStyle = grd;
@@ -58,34 +66,98 @@ and open the template in the editor.
                 
                 this.canvasCTX.fillStyle = "rgba(186,218,110,1)";
                 this.canvasCTX.fillRect(0, this.canvas.height/2, this.canvas.width+1, this.canvas.height);
-                                
+                this.canvasCTX.restore();            
             };
             
             
-            Battle.prototype.fight = function() {
+             Battle.prototype.fight = function() {
                 if ( !this.atkInProgress ) {
+                    console.log(this.atkInProgress);
                     this.atkInProgress = true;
-                    requestAnimationFrame(this.attack);
+                    this.attack();
                 }
             };
             
             Battle.prototype.attack = function() {
+               
                 if ( this.atkInProgress ) {
+                   
+                    this.count = (this.count + 1) % this.maxCounter;
+		
+                    var ex =  Math.floor((this.canvas.width/2))+10;
+                    var ey = Math.floor(this.canvas.height/2)+15;
                     
                     
                     
-                    requestAnimationFrame(this.attack);
+                            if ( this.count === 0) {
+                                
+                                /*
+                                snd.pause();
+                                snd.currentTime=0;
+                                snd.play();
+                                */
+                                this.canvasCTX.save();
+                                this.canvasCTX.beginPath();
+                                this.canvasCTX.arc(ex,ey,25,1*Math.PI, 1.9*Math.PI);
+                                this.canvasCTX.stroke();
+                                this.canvasCTX.closePath();                               
+                                this.canvasCTX.restore();
+                                
+                                this.atkInProgress = false;
+
+                        }else {		
+
+                                this.canvasCTX.save();
+
+                                this.canvasCTX.shadowColor = "black";
+                                this.canvasCTX.shadowOffsetX = 0;
+                                this.canvasCTX.shadowOffsetY = 0;
+                                this.canvasCTX.shadowBlur = 10;
+
+                                this.canvasCTX.beginPath();
+                                this.canvasCTX.lineWidth = 3;
+                                this.canvasCTX.strokeStyle = 'white';
+                                this.canvasCTX.arc(ex,ey,25,1*Math.PI,( (this.count/this.maxCounter) + 1.0)*Math.PI);
+                                this.canvasCTX.stroke();
+                                this.canvasCTX.restore();
+                        }
+                    
+                   
                 }
             };
             
             var bat = new Battle(canvas,hero,enemy);
-            bat.drawBackGround();
             
-            bat.hero.setCords( (bat.canvasTileRows*.45) , (bat.canvasTileCols*.75) ).draw(bat.canvasCTX);
-            bat.enemy.setCords( (bat.canvasTileRows*.45) , (bat.canvasTileCols*.44) ).draw(bat.canvasCTX);
             
-            console.log(bat.hero.cords() );
+            function drw() {
+                bat.drawBackGround();
             
+                bat.hero.setCords( (bat.canvasTileRows*.45) , (bat.canvasTileCols*.75) ).draw(bat.canvasCTX);
+                bat.enemy.setCords( (bat.canvasTileRows*.45) , (bat.canvasTileCols*.44) ).draw(bat.canvasCTX);
+            
+            }
+            
+           
+            drw();
+            
+            function figt() {
+                bat.atkInProgress = true;
+                 atk();
+            }
+            
+            function atk() {
+                    
+                    
+                    
+             if(bat.atkInProgress) {
+                 bat.attack();
+                 requestAnimationFrame(atk);
+             } else {
+                 drw();
+             }
+            }
+            
+                        
             
         </script>
     </body>
