@@ -17,29 +17,39 @@ and open the template in the editor.
         <canvas id="game" width="256" height="256"></canvas>
         <br />
         
+        <script type="text/javascript" src="js/data.js"></script>
+        <script type="text/javascript" src="js/tile.js"></script>
+        <script type="text/javascript" src="js/input.js"></script>
+        <script type="text/javascript" src="js/entity.js"></script>
+        <script type="text/javascript" src="js/enemy.js"></script>
+        
         
         <script type="text/javascript">
-            
-            
+                        
             var canvas = document.getElementById('game');
             
-            
+            var hero = new Entity(data.hero);
+            var enemy = new Enemy(data.enemies.dark);
+                        
             function Battle(canvas, hero, enemy) {
                 this.canvas = canvas;
                 this.canvasCTX = canvas.getContext('2d');
                 this.hero = hero;
                 this.enemy = enemy;
                 
+                this.canvasTileRows = Math.floor(this.canvas.height/data.tile.size);
+                this.canvasTileCols = Math.floor(this.canvas.width/data.tile.size);
                 
-                
+                this.atkInProgress = false;
+                this.turns = [this.hero, this.enemy];
             }
             
             
             Battle.prototype.drawBackGround = function() {
                 this.canvasCTX.clearRect(0,0,this.canvas.width+1, this.canvas.height+1);
                 
-                 var grd = this.canvasCTX.createLinearGradient(0, 0, 0, this.canvas.height/2);
-	      // light blue
+                var grd = this.canvasCTX.createLinearGradient(0, 0, 0, this.canvas.height/2);
+                // light blue
                 grd.addColorStop(0, '#004CB3');                  
                 grd.addColorStop(.50, '#FFFFFF');   
                 
@@ -51,8 +61,31 @@ and open the template in the editor.
                                 
             };
             
-            var bat = new Battle(canvas);
+            
+            Battle.prototype.fight = function() {
+                if ( !this.atkInProgress ) {
+                    this.atkInProgress = true;
+                    requestAnimationFrame(this.attack);
+                }
+            };
+            
+            Battle.prototype.attack = function() {
+                if ( this.atkInProgress ) {
+                    
+                    
+                    
+                    requestAnimationFrame(this.attack);
+                }
+            };
+            
+            var bat = new Battle(canvas,hero,enemy);
             bat.drawBackGround();
+            
+            bat.hero.setCords( (bat.canvasTileRows*.45) , (bat.canvasTileCols*.75) ).draw(bat.canvasCTX);
+            bat.enemy.setCords( (bat.canvasTileRows*.45) , (bat.canvasTileCols*.44) ).draw(bat.canvasCTX);
+            
+            console.log(bat.hero.cords() );
+            
             
         </script>
     </body>
