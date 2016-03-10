@@ -152,7 +152,9 @@ THE SOFTWARE.
                 }
                 game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
                 
-                game.enemy.move();
+                if ( game.enemy.map === data.game.map ) {
+                    game.enemy.move();
+                }
                 
                 if( game.enemy.collisionCanvas(game.canvas) ) {
                     game.enemy.collisionFix();
@@ -276,7 +278,9 @@ THE SOFTWARE.
                 
                 
                 game.drawTileSet();
-                game.enemy.draw(game.canvasCTX);
+                if ( game.enemy.map === data.game.map ) {
+                    game.enemy.draw(game.canvasCTX);
+                }
                 game.hero.draw(game.canvasCTX);
                 requestAnimationFrame(game.draw);
                 return this;

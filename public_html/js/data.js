@@ -13,6 +13,7 @@ data.hero = {
 
 data.enemies = {
     "dark" : {
+        "map": "middle",
         "tileSize" : 16,
         "row" : 4,
         "col" : 5,

@@ -18,6 +18,8 @@ function Enemy(o){
         this.tickMove = 1;
         
         this.pause = false;
+        
+        this.map;
 	
         this.param(o);
 }
@@ -47,6 +49,9 @@ Enemy.prototype.param = function (o) {
             }
             if (o.hasOwnProperty('img') ) {
                 this.img.src = o.img;
+            }
+            if (o.hasOwnProperty('map') ) {
+                this.map = o.map;
             }
 	}
 	
