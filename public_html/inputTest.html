@@ -143,6 +143,10 @@ THE SOFTWARE.
             game.canvasTileCols = Math.floor(game.canvas.width/data.tile.size);
             
             game.tileID = 0;
+            
+            game.mapChangeInProgress = false;
+            
+            game.enemies = [];
            
                        
             game.draw = function() {
@@ -152,12 +156,16 @@ THE SOFTWARE.
                 }
                 game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
                 
-                if ( game.enemy.map === data.game.map ) {
-                    game.enemy.move();
-                }
                 
-                if( game.enemy.collisionCanvas(game.canvas) ) {
-                    game.enemy.collisionFix();
+                for ( var i = game.enemies.length-1; i >= 0; --i){                   
+                    if ( game.enemies[i].map === data.game.map && !game.mapChangeInProgress ) {
+                        game.enemies[i].move();
+
+
+                        if( game.enemies[i].collisionCanvas(game.canvas) ) {
+                            game.enemies[i].collisionFix();
+                        }
+                    }
                 }
                 
                 game.hero.move(game.input);
@@ -263,23 +271,28 @@ THE SOFTWARE.
                    // fix will fail
                    // make a collision class
                    // make a enemy map like world map, if dead can delete to save memeory
-                    var enemyCords = game.enemy.cords();
-                    
-                    var enemyTileID = data.game.world[data.game.map].map[ enemyCords.row ][ enemyCords.col ] || 0;
-                    
-                    
-                    if ( roadBlocks.indexOf(data.tile.map[enemyTileID].type) > -1 ) {
-                        game.enemy.collisionFix();                        
-                    }
-                    
-                    
+                    for ( var i = game.enemies.length-1; i >= 0; --i){
+                        if ( game.enemies[i].map === data.game.map && !game.mapChangeInProgress ) {
+                             var enemyCords = game.enemies[i].cords();
+
+                             var enemyTileID = data.game.world[data.game.map].map[ enemyCords.row ][ enemyCords.col ] || 0;
+
+
+                             if ( roadBlocks.indexOf(data.tile.map[enemyTileID].type) > -1 ) {
+                                 game.enemies[i].collisionFix();                        
+                             }
+
+                         }
+                     }
                 
                 }   
                 
                 
                 game.drawTileSet();
-                if ( game.enemy.map === data.game.map ) {
-                    game.enemy.draw(game.canvasCTX);
+                for ( var i = game.enemies.length-1; i >= 0; --i){
+                    if ( game.enemies[i].map === data.game.map && !game.mapChangeInProgress ) {
+                        game.enemies[i].draw(game.canvasCTX);
+                    }
                 }
                 game.hero.draw(game.canvasCTX);
                 requestAnimationFrame(game.draw);
@@ -292,7 +305,12 @@ THE SOFTWARE.
             
             
             
-            
+            for ( var x in data.enemies) {
+                if ( data.enemies.hasOwnProperty(x) ) {
+                    game.enemies.push(new Enemy(data.enemies[x]));
+                }
+            }
+                     
             
             
             
@@ -396,7 +414,8 @@ THE SOFTWARE.
             function changeMapBottom(){
                             
                 var undfind;
-                                
+                  
+                game.mapChangeInProgress = true;
                 
                 game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
                 
@@ -422,7 +441,7 @@ THE SOFTWARE.
                     data.game.map = data.game.world[data.game.map].exits.bottom;
                     game.hero.row = 0;
                     game.draw();
-                    
+                    game.mapChangeInProgress = false;
                 } else {
                     requestAnimationFrame(changeMapBottom);
                 }
@@ -437,7 +456,7 @@ THE SOFTWARE.
             function changeMapTop(){
                             
                 var undfind;
-                                
+                game.mapChangeInProgress = true;                
                 
                 game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
                 
@@ -463,6 +482,7 @@ THE SOFTWARE.
                     data.game.map = data.game.world[data.game.map].exits.top;
                     game.hero.row = (game.canvasTileRows-1)*data.tile.size;
                     game.draw();
+                    game.mapChangeInProgress = false;
                     
                 } else {
                     requestAnimationFrame(changeMapTop);
@@ -479,7 +499,7 @@ THE SOFTWARE.
                             
                 var undfind;
                                 
-                
+                game.mapChangeInProgress = true;
                 game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
                 
                 for (var r = 0; r < game.canvasTileRows; r++) {
@@ -504,6 +524,7 @@ THE SOFTWARE.
                     data.game.map = data.game.world[data.game.map].exits.right;
                     game.hero.col = 0;
                     game.draw();
+                    game.mapChangeInProgress = false;
                     
                 } else {
                     requestAnimationFrame(changeMapRight);
@@ -519,7 +540,7 @@ THE SOFTWARE.
                             
                 var undfind;
                                 
-                
+                game.mapChangeInProgress = true;
                 game.canvasCTX.clearRect(0,0,game.canvas.width+1, game.canvas.height+1);
                 
                 for (var r = 0; r < game.canvasTileRows; r++) {
@@ -544,7 +565,7 @@ THE SOFTWARE.
                     data.game.map = data.game.world[data.game.map].exits.left;
                     game.hero.col = (game.canvasTileCols-1)*data.tile.size;
                     game.draw();
-                    
+                    game.mapChangeInProgress = false;
                 } else {
                     requestAnimationFrame(changeMapLeft);
                 }
@@ -560,7 +581,7 @@ THE SOFTWARE.
                 
                 mapchangeData.viewport += 25;
                 
-                
+                game.mapChangeInProgress = true;
                 game.canvasCTX.beginPath();
                 game.canvasCTX.lineWidth=mapchangeData.viewport;
                 game.canvasCTX.strokeStyle="black";
@@ -603,7 +624,7 @@ THE SOFTWARE.
                     myReq = null;
                     mapchangeData.viewport = 0;                    
                     game.draw();
-                    
+                    game.mapChangeInProgress = false;
                 } else {
                     requestAnimationFrame(changeLocationOut);
                 }

@@ -21,6 +21,28 @@ data.enemies = {
         "level" : 1,
         "alive" : true,
         "img" : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAk0lEQVQ4T6WT4RKAIAiD4/0fuqS7cXMOq4tfpfA5GcY54vgR4QARcTiuW18AXTFE6v5WQSYjUlGrwCV2bQGoFKEHDMlNTdT/ykkApHWQtnhcceqBAnbuwqUb8KVQoaUAkCKTA+xEfnPuosDdl0+1Lrw5vVNRCnh0dz3RvAWgQ8Uj7FQ82tj1ZLJRHwoPFr8BXc+6C/LWruYtO9QLAAAAAElFTkSuQmCC'
+    }, 
+    "man" : {
+        "map": "top",
+        "tileSize" : 16,
+        "row" : 11,
+        "col" : 5,
+        "health" : 100,
+        "level" : 1,
+        "alive" : true,
+        "img":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAgUlEQVQ4T52TUQ7AIAhD5f6H3sYSTNO0ovKj2bQ8KMbzxbiMiBihBPJH6dY+1wzOZwUQCsVQ5IigBJEuv22X8B+mMpYEXELbA0ZD5Norw2YJNoPp/kyANioRJywFsFE8W27epAt4+ZhAXd5qIiMrz5cudNjW5u4x8Ty0j2nVNEXxAmKZmdptkpeQAAAAAElFTkSuQmCC"
+      
+    },
+    "snake" : {
+        "map": "top",
+        "tileSize" : 16,
+        "row" : 10,
+        "col" : 9,
+        "health" : 100,
+        "level" : 1,
+        "alive" : true,
+        "img":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAX0lEQVQ4T+2TQRKAMAgDm/8/2hZGOtHRGuRa7tmQ0OIY0wqDDWjpDgDMyq3/FCDELjxBMoCd+eoS4E1soN+AeH8SIFa+FyhvcMlcuYI7fgGe1pQjrNrmGPyBvcSsK8M6BPxg2qyh0oEAAAAASUVORK5CYII="
+      
     }  
 };
 
